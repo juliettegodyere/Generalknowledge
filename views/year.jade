@@ -1,0 +1,17 @@
+extends ./layout
+
+block content
+    
+    h1.
+        #{title}
+    form(name="loginForm",method="post",action="/category/course/year", id="year", class="form-horizontal")
+        div.form-group.row
+            div.col-md-1
+                p Name:
+            div.col-md-4 
+                input(type="text", placeholder="year name", name="yrName",class="form-control", id="yrName")
+        div.form-group.row
+            div.col-md-1
+                        
+            div.col-md-4
+                button#submit.btn-info.form-control(type="submit", value="Submit") submit

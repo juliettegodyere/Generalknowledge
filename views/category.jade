@@ -1,0 +1,19 @@
+extends ./layout
+
+block content
+    
+    h1.
+        #{title}
+    form(name="loginForm",method="post",action="/category", id="category", class="form-horizontal")
+        div.form-group.row
+            div.col-md-1
+                p Name:
+            div.col-md-4 
+                input(type="text", placeholder="Category name", name="catName",class="form-control", id="catName")
+        div.form-group.row
+            div.col-md-1
+                        
+            div.col-md-4
+                button#submit.btn-info.form-control(type="submit", value="Submit") submit
+
+    
