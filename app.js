@@ -75,36 +75,45 @@ app.post('/category/course/year', function(req,res){
     });      
 });
 
+// models.Category.find({_id:"57711c6c4322fbf0721d3803"}, function(err,cat){
+//     console.log(cat._id);
+// });
 
 app.get('/category/course/year/question', function(req, res, next) {
-  var categories = models.Category.find().exec(function(err, categories){
-      if(err){return res.status(500).send();
+  
+  // STAGE 1
+  models.Category.find().exec(function(err, categories){
+      if(err){
+        return res.status(500).send();
       }else{
-        console.log(categories);
-      }
-  
-    });
-  var courses = models.Course.find().exec(function(err, courses){
-    if(err){return res.status(500).send();
-    }else{
-      console.log(courses);
+        // STAGE 2
+        models.Course.find().exec(function(err, courses){
+        if(err){
+          return res.status(500).send();
+        }else{
+          // console.log(courses);
+          
+          // STAGE 3
+          models.Year.find().exec(function(err, years){
+          if(err){
+            return res.status(500).send();
+          }else{
+            // console.log(years);
+            
+            // FINAL
+            res.render('question', { 
+              title: 'Questions',
+              categories:categories,
+              courses: courses,
+              years: years
+              });
+            }
+          });
+        }
+      });
     }
   });
-  var years = models.Year.find().exec(function(err, years){
-    if(err){return res.status(500).send();
-    }else{
-      console.log(years);
-    }
-
-  });
   
-  res.render('question', { 
-    title: 'Questions',
-    categories:categories,
-    courses: courses,
-    years: years,
-
-  });
 });
 
 app.post('/category/course/year/question', function(req,res){

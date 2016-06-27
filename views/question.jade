@@ -34,10 +34,23 @@ block content
             div.col-md-1
                 p CategoryID:
             div.col-md-4 
-                select#categorys.form-control
-                - each category in categories
-                    div#category 
-                    option(value=category._id) #{category.catName}    
+                select(name='categoryID' class="form-control")
+                    each category in categories
+                        option(value=category._id,) #{category.catName}
+        div.form-group.row
+            div.col-md-1
+                p CourseID:
+            div.col-md-4 
+                select(name='courseID' class="form-control")
+                    each course in courses
+                        option(value=course._id) #{course.cozName}
+        div.form-group.row
+            div.col-md-1
+                p YearID:
+            div.col-md-4 
+                select(name='yearID' class="form-control")
+                    each year in years
+                        option(value=year._id) #{year.yrName}    
 
         div.form-group.row
             div.col-md-1             

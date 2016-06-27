@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 var uniqueValidator = require('mongoose-unique-validator');
-mongoose.connect('mongodb://127.0.0.1:27017/gem');
+mongoose.connect('mongodb://127.0.0.1:27017/gemIQ');
 
 var categorySchema = new mongoose.Schema({
 
