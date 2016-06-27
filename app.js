@@ -146,7 +146,7 @@ app.post('/category/course/year/question', function(req,res){
     });      
 });
 
-app.listen(3001,function(){
-  console.log('Example listening on port 3001');
+app.listen(3009,function(){
+  console.log('Example listening on port 3009');
 });
 module.exports = app;
