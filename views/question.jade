@@ -3,41 +3,41 @@ extends ./layout
 block content
     
     h1.
-        #{title}
+        #{title} 
     form(name="loginForm",method="post",action="/category/course/year/question", id="question", class="form-horizontal")
         div.form-group.row
             div.col-md-1
-                p Name:
+                p Question:
             div.col-md-4 
                 input(type="text", placeholder="course name", name="question",class="form-control", id="question")
         div.form-group.row
             div.col-md-1
-                p Name:
+                p Answer:
             div.col-md-4 
                 input(type="text", placeholder="course name", name="answer",class="form-control", id="answer")
         div.form-group.row
             div.col-md-1
-                p Name:
+                p Option:
             div.col-md-4 
                 input(type="text", placeholder="course name", name="option",class="form-control", id="option")
         div.form-group.row
             div.col-md-1
-                p Name:
+                p Explanation:
             div.col-md-4 
                 input(type="text", placeholder="course explanation", name="explanation",class="form-control", id="explanation")
         div.form-group.row
             div.col-md-1
-                p Name:
+                p Image:
             div.col-md-4 
                 input(type="text", placeholder="course name", name="image",class="form-control", id="image")
         div.form-group.row
             div.col-md-1
-                p Name:
+                p CategoryID:
             div.col-md-4 
                 select#categorys.form-control
-                - each category in categorys
-                    div#category
-                    option(name="category" value=category._id) #{category.catName}    
+                - each category in categories
+                    div#category 
+                    option(value=category._id) #{category.catName}    
 
         div.form-group.row
             div.col-md-1             

@@ -19,17 +19,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 app.get('/category', function(req, res) {
-  res.render('category', { title: 'Express' });
+  res.render('category', { title: 'Category' });
 });
-
-// app.post('/category', function(req, res) {
-//   var catName  = req.body.catName;
-//   var data     = new models.Category();
-//   data.catName = catName,
-//  console.log('i got here');
-// });
-
-
 
 app.post('/category', function(req,res){
   var catName  = req.body.catName;
@@ -47,7 +38,7 @@ app.post('/category', function(req,res){
 });
 
 app.get('/category/course', function(req, res) {
-  res.render('course', { title: 'Express' });
+  res.render('course', { title: 'Course' });
 });
 
 app.post('/category/course', function(req,res){
@@ -66,7 +57,7 @@ app.post('/category/course', function(req,res){
 });
 
 app.get('/category/course/year', function(req, res) {
-  res.render('year', { title: 'Express' });
+  res.render('year', { title: 'Year' });
 });
 
 app.post('/category/course/year', function(req,res){
@@ -84,36 +75,34 @@ app.post('/category/course/year', function(req,res){
     });      
 });
 
-app.get('/category/course/year/question', function(req, res) {
-  var categorys = function(req,res,next){ 
-    models.Category.find({}, function(err, categorys){
+
+app.get('/category/course/year/question', function(req, res, next) {
+  var categories = models.Category.find().exec(function(err, categories){
       if(err){return res.status(500).send();
       }else{
-        console.log(categorys);
+        console.log(categories);
       }
   
     });
-  }
-   var course = models.Course.find({}, function(err, course){
+  var courses = models.Course.find().exec(function(err, courses){
     if(err){return res.status(500).send();
     }else{
-      console.log(course);
+      console.log(courses);
     }
   });
-    var year = models.Year.find({}, function(err, year){
+  var years = models.Year.find().exec(function(err, years){
     if(err){return res.status(500).send();
     }else{
-      console.log(year);
+      console.log(years);
     }
 
   });
   
-
   res.render('question', { 
-    title: 'Express',
-    "categorys":categorys,
-    "course": course,
-    "year": year,
+    title: 'Questions',
+    categories:categories,
+    courses: courses,
+    years: years,
 
   });
 });
