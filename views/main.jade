@@ -1,0 +1,26 @@
+extends ./layout
+
+block content
+
+	h1.
+		#{title} 
+	form(name="loginForm",method="post",action="", id="course", class="form-horizontal")
+		div.form-group.row
+			div.col-md-3
+				select(name='catID',class='form-control')
+					each category in categories
+						option(value=category._id) #{category.catName}
+			div.col-md-3
+				select(name='cozID',class='form-control')
+					each course in courses
+						option(value=course._id) #{course.cozName}
+			div.col-md-3
+				select(name='yrID' class="form-control")
+					each year in years
+						option(value=year._id) #{year.yrName}  
+		div.form-group.row
+			div.col-md-1
+		div.col-md-4
+			button#submit.btn-info.form-control(type="submit", value="Submit") submit
+
+

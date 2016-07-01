@@ -6,17 +6,12 @@ var path = require('path');
 var models = require('./models/data');
 var app = express();
 
-// view engine setup
-
-
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true  }));
 app.use(express.static(path.join(__dirname, 'public')));
-
-
 
 app.get('/category', function(req, res) {
   res.render('category', { title: 'Category' });
@@ -30,7 +25,6 @@ app.post('/category', function(req,res){
   data.save(function(err,cat){
     if (err) return res.status(err);
       console.log(cat);
-
       res.json({
         cat:cat
       });
@@ -74,10 +68,6 @@ app.post('/category/course/year', function(req,res){
       });
     });      
 });
-
-// models.Category.find({_id:"57711c6c4322fbf0721d3803"}, function(err,cat){
-//     console.log(cat._id);
-// });
 
 app.get('/category/course/year/question', function(req, res, next) {
   
@@ -144,6 +134,68 @@ app.post('/category/course/year/question', function(req,res){
         quest:quest
       });
     });      
+});
+
+app.get('/main', function(req,res,next){
+  models.Category.find().exec(function(err, categories){
+      if(err){
+        return res.status(500).send();
+      }else{
+        // STAGE 2
+        models.Course.find().exec(function(err, courses){
+        if(err){
+          return res.status(500).send();
+        }else{
+          
+          // STAGE 3
+          models.Year.find().exec(function(err, years){
+          if(err){
+            return res.status(500).send();
+          }else{
+
+            // FINAL STAGE
+            res.render('main', { 
+              title: 'Main',
+              categories:categories,
+              courses: courses,
+              years: years
+              });
+            }
+          });
+        }
+      });
+    }
+  });
+});
+
+app.post('/main', function(req,res){
+  models.Question.find({},function(err,find){
+    var catID    = req.body.catID;
+    var cozID    = req.body.cozID;
+    var yrID     = req.body.yrID;
+    var sortedArray = [];
+    console.log(find.length);
+    find.forEach(function(item){
+      if (catID==item.categoryID && cozID==item.courseID && yrID==item.yearID){
+        var newGuy = {
+          "question": item.question,
+          "answer": item.answer,
+          "explanation":item.explanation,
+          "image": item.image,
+          "options": item.option ? item.option.split('|') : ''
+        }
+        sortedArray.push(newGuy); 
+        console.log('passed');
+      } else {
+        console.log('failed');
+      }
+    });
+    res.json({
+        users: sortedArray
+     })
+    
+ 
+  });
 });
 
 app.listen(3009,function(){
