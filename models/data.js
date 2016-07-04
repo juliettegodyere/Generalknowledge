@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 var uniqueValidator = require('mongoose-unique-validator');
-mongoose.connect('mongodb://127.0.0.1:27017/gemIQs');
+mongoose.connect('mongodb://127.0.0.1:27017/GKnowledge');
 
 var categorySchema = new mongoose.Schema({
 	catName: {
@@ -43,7 +43,7 @@ var questionSchema = new mongoose.Schema({
 	answer: String,
 	option:String,
 	explanation:String,
-	image:Date,
+	image:String,
 	categoryID: String,
 	courseID: String,
 	yearID: String

@@ -1,0 +1,14 @@
+extends layout
+
+block content
+	h1= title
+	p Welcome to #{title}
+
+	- each value, i in find
+		- each array, i in sortedArrays
+			if array.catID == value.categoryID || array.cozID == value.courseID || array.yrID == value.yearID
+				p.id Questions:#{value.question}
+				p.id ID:#{value.answer}
+			
+			
+		

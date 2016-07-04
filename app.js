@@ -30,6 +30,14 @@ app.post('/category', function(req,res){
       });
     });      
 });
+app.get('/cat', function(req,res){
+  models.Category.find({},function(err, cats){
+    res.json({
+      category:cats
+    });
+  });
+});
+
 
 app.get('/category/course', function(req, res) {
   res.render('course', { title: 'Course' });
@@ -49,7 +57,13 @@ app.post('/category/course', function(req,res){
       });
     });      
 });
-
+app.get('/cat/coz', function(req,res){
+  models.Course.find({},function(err, cos){
+    res.json({
+      course:cos
+    });
+  });
+});
 app.get('/category/course/year', function(req, res) {
   res.render('year', { title: 'Year' });
 });
@@ -67,6 +81,13 @@ app.post('/category/course/year', function(req,res){
         yr:yr
       });
     });      
+});
+app.get('/cat/coz/yr', function(req,res){
+  models.Year.find({},function(err, yrm){
+    res.json({
+      Year:yrm
+    });
+  });
 });
 
 app.get('/category/course/year/question', function(req, res, next) {
@@ -129,13 +150,39 @@ app.post('/category/course/year/question', function(req,res){
   data4.save(function(err,quest){
     if (err) return res.status(err);
       console.log(quest);
-
       res.json({
         quest:quest
       });
     });      
 });
 
+app.get('/', function(req,res){
+  models.Question.find({}, function(err, find2){
+    var sortedArray = [];
+    find2.forEach(function(item){
+      // if (catID==item.categoryID && cozID==item.courseID && yrID==item.yearID){
+        var newGuy = {
+          "question": item.question,
+          "answer": item.answer,
+          "explanation":item.explanation,
+          "image": item.image,
+          "options": item.option ? item.option.split('|') : ''
+        }
+        sortedArray.push(newGuy); 
+        // console.log('passed');
+      // } else {
+      //   console.log('failed');
+      // }
+    });
+    res.json({
+        users: sortedArray
+     })
+    
+  })
+});
+// app.get('/examQuestions', function(req, res, next) {
+//   res.send('examQuestions', { title: 'Express' });
+// });
 app.get('/main', function(req,res,next){
   models.Category.find().exec(function(err, categories){
       if(err){
@@ -168,35 +215,45 @@ app.get('/main', function(req,res,next){
   });
 });
 
-app.post('/main', function(req,res){
-  models.Question.find({},function(err,find){
-    var catID    = req.body.catID;
-    var cozID    = req.body.cozID;
-    var yrID     = req.body.yrID;
-    var sortedArray = [];
-    console.log(find.length);
-    find.forEach(function(item){
-      if (catID==item.categoryID && cozID==item.courseID && yrID==item.yearID){
-        var newGuy = {
-          "question": item.question,
-          "answer": item.answer,
-          "explanation":item.explanation,
-          "image": item.image,
-          "options": item.option ? item.option.split('|') : ''
-        }
-        sortedArray.push(newGuy); 
-        console.log('passed');
-      } else {
-        console.log('failed');
-      }
-    });
-    res.json({
-        users: sortedArray
-     })
-    
- 
+app.get('/testing', function(req, res){
+  var aa = {
+    Jamb : req.param('catid'),
+    Economics : req.param('courid'),
+    2010 : req.param('yeaid'),
+  };
+  res.json({
+    param : aa,
   });
 });
+
+app.post('/main', function(req,res){
+  models.Question.find({},function(err,find){
+    if(err){
+      return res.status(500).send();
+    }else{
+      var catID        = req.body.catID;
+      var cozID        = req.body.cozID;
+      var yrID         = req.body.yrID;
+      var sortedArrays = [];
+      var data5        = new models.Main({
+        catID : catID,
+        cozID : cozID,
+        yrID  : yrID
+      });
+      sortedArrays.push(data5);
+      console.log(sortedArrays);
+      res.json({
+        sortedArrays:sortedArrays
+      })
+      // res.render('examQuestions',{
+      //   title:'Exam Questions',
+      //   sortedArrays:sortedArrays,
+      //   find:find
+       
+      // });
+    }
+  });
+}); 
 
 app.listen(3009,function(){
   console.log('Example listening on port 3009');
