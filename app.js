@@ -1,5 +1,8 @@
 var express = require('express');
 var bodyParser = require('body-parser');
+var json2csv = require('json2csv');
+var Converter = require("csvtojson").Converter;
+var fs = require('fs');
 var http = require('http');
 var path = require('path');
 
@@ -13,6 +16,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true  }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+//Category routes
 app.get('/category', function(req, res) {
   res.render('category', { title: 'Category' });
 });
@@ -30,6 +34,7 @@ app.post('/category', function(req,res){
       });
     });      
 });
+//Get all categories
 app.get('/cat', function(req,res){
   models.Category.find({},function(err, cats){
     res.json({
@@ -38,7 +43,7 @@ app.get('/cat', function(req,res){
   });
 });
 
-
+//Course routes
 app.get('/category/course', function(req, res) {
   res.render('course', { title: 'Course' });
 });
@@ -57,6 +62,7 @@ app.post('/category/course', function(req,res){
       });
     });      
 });
+//Get all courses
 app.get('/cat/coz', function(req,res){
   models.Course.find({},function(err, cos){
     res.json({
@@ -64,6 +70,8 @@ app.get('/cat/coz', function(req,res){
     });
   });
 });
+
+//Year route
 app.get('/category/course/year', function(req, res) {
   res.render('year', { title: 'Year' });
 });
@@ -82,6 +90,7 @@ app.post('/category/course/year', function(req,res){
       });
     });      
 });
+//Get all years
 app.get('/cat/coz/yr', function(req,res){
   models.Year.find({},function(err, yrm){
     res.json({
@@ -90,6 +99,7 @@ app.get('/cat/coz/yr', function(req,res){
   });
 });
 
+//Question route
 app.get('/category/course/year/question', function(req, res, next) {
   
   // STAGE 1
@@ -156,6 +166,7 @@ app.post('/category/course/year/question', function(req,res){
     });      
 });
 
+//Get all questions and return it as json array
 app.get('/', function(req,res){
   models.Question.find({}, function(err, find2){
     var sortedArray = [];
@@ -175,14 +186,13 @@ app.get('/', function(req,res){
       // }
     });
     res.json({
-        users: sortedArray
-     })
+      users: sortedArray
+    })
     
   })
 });
-// app.get('/examQuestions', function(req, res, next) {
-//   res.send('examQuestions', { title: 'Express' });
-// });
+
+//Routes to submit desired category, course, year
 app.get('/main', function(req,res,next){
   models.Category.find().exec(function(err, categories){
       if(err){
@@ -214,18 +224,6 @@ app.get('/main', function(req,res,next){
     }
   });
 });
-
-app.get('/testing', function(req, res){
-  var aa = {
-    Jamb : req.param('catid'),
-    Economics : req.param('courid'),
-    2010 : req.param('yeaid'),
-  };
-  res.json({
-    param : aa,
-  });
-});
-
 app.post('/main', function(req,res){
   models.Question.find({},function(err,find){
     if(err){
@@ -253,7 +251,91 @@ app.post('/main', function(req,res){
       // });
     }
   });
+});
+
+app.get('/testing', function(req, res){
+
+  models.Question.find({}, function(err, jule){
+    var sortedArray = [];
+    var catid =  req.param('catid');
+    var courid = req.param('courid');
+    var yeaid = req.param('yeaid');
+    jule.forEach(function(gan){
+      if(catid==gan.categoryID && courid==gan.courseID && yeaid==gan.yearID){
+        var give = {
+          "question": gan.question,
+          "answer": gan.answer,
+          "explanation":gan.explanation,
+          "image": gan.image,
+          "options": gan.option ? gan.option.split('|') : ''
+        }
+        sortedArray.push(give); 
+        // console.log('passed');
+      // } else {
+      //   console.log('failed');
+      }
+    });
+    res.json({
+      users: sortedArray
+    })
+  })
 }); 
+//Export Database
+var fields = ['question', 'answer', 'option', 'explanation', 'image','categoryID','courseID','yearID'];
+
+app.get('/export', function(res, req){
+     models.Question.find({}, function(err, questions){
+        if (err) {
+            console.log(err);
+            return res.status(500).send();
+        }else{
+           console.log(questions.length+'--------------------------------');
+           json2csv({
+            data:questions,
+            fields: fields
+           }, function(err,csv){
+            if (err) console.log(err);
+                fs.writeFile('file.csv', csv, function(err) {
+                    if (err) throw err;
+                    console.log('file saved');
+                });
+           }); 
+        } 
+    });
+});
+
+app.get('/import', function(res,req){
+    var converter = new Converter({});
+    converter.fromFile("./file.csv", function(err,items){
+      if (err) console.log(err);
+        var numberOfSavedRecords = 0;
+        var numberOfErrorRecords = 0;
+        console.log(items.length);
+        items.forEach(function(item){
+          var current     = item;
+          var data        = new models.Question();
+          data.question   = current.question;
+          data.answer     = current.answer;
+          data.image      = current.image;
+          data.option     = current.option;
+          data.categoryID = current.categoryID;
+          data.courseID   = current.courseID;
+          data.yearID     = current.yearID;
+
+          data.save(function(err, qtn) {
+              if (err) {
+                  console.log(err);
+                  numberOfErrorRecords++;
+              } else {
+                console.log();
+                  numberOfSavedRecords++;  
+              }
+          });
+        })
+        console.log('Report: '+numberOfSavedRecords + 'records completed and ' + numberOfErrorRecords + ' records failed');
+    })
+    
+})
 
 app.listen(3009,function(){
   console.log('Example listening on port 3009');
