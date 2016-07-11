@@ -1,6 +1,8 @@
 var mongoose = require('mongoose');
 var uniqueValidator = require('mongoose-unique-validator');
-mongoose.connect('mongodb://127.0.0.1:27017/GKnowledge');
+var ipAddr = 'local_mongo';
+//mongoose.connect('mongodb://127.0.0.1/27017/GKnowledge');
+mongoose.connect('mongodb://'+ipAddr+':27017/GKnowledge');
 
 var categorySchema = new mongoose.Schema({
 	catName: {
