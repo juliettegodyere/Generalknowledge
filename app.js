@@ -192,6 +192,8 @@ app.get('/', function(req,res){
   })
 });
 
+
+
 //Routes to submit desired category, course, year
 app.get('/main', function(req,res,next){
   models.Category.find().exec(function(err, categories){
@@ -336,6 +338,69 @@ app.get('/import', function(res,req){
     })
     
 })
+app.get('/category/:category_id',function(req, res) {
+  var allExams = [];
+  var _id =req.params.category_id;
+  var mainArray = [];
+  //
+  models.Question.find({categoryID:_id}, function(err, questions) {
+    var tempArr = [];
+    console.log(questions.length);
+    var questionIndex = 0;
+    questions.forEach(function(item){
+          models.Course.find({_id:item.courseID}, function(err, selected){
+             var name = selected[0].cozName;
+             var newObj = {
+                id : item.courseID, 
+                name : name
+             }
+             if (tempArr.indexOf(item.courseID) == -1){
+                mainArray.push(newObj);
+                tempArr.push(item.courseID);
+             }
+             questionIndex++;  
+             if (questionIndex == questions.length){
+                res.json({result: mainArray});
+             }
+             console.log(questionIndex);
+             
+          });
+    });
+    
+  });
+});
+app.get('/category/:category_id/course/:course_id', function(req,res){
+  var allExams = [];
+  var _id =req.params.category_id;
+  var course_id =req.params.course_id;
+  var mainArray = [];
+  //
+  models.Question.find({categoryID:_id, courseID:course_id}, function(err, questions) {
+    var tempArr = [];
+    console.log(questions.length);
+    var questionIndex = 0;
+    questions.forEach(function(item){
+          models.Year.find({_id:item.yearID}, function(err, selected){
+             var name = selected[0].yrName;
+             var newObj = {
+                id : item.yearID, 
+                name : name
+             }
+             if (tempArr.indexOf(item.yearID) == -1){
+                mainArray.push(newObj);
+                tempArr.push(item.yearID);
+             }
+             questionIndex++;  
+             if (questionIndex == questions.length){
+                res.json({result: mainArray});
+             }
+             // console.log(questionIndex);
+             
+          });
+    });
+    
+  });
+});
 
 app.listen(3009,function(){
   console.log('Example listening on port 3009');
